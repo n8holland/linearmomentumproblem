@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Linear Momentum Problem</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Custom styles for better visual feedback */
+        .correct-answer {
+            animation: flash-green 1s;
+        }
+        .incorrect-answer {
+            animation: flash-red 1s;
+        }
+        @keyframes flash-green {
+            0%, 100% { background-color: #f0fff4; border-color: #9ae6b4; }
+            50% { background-color: #c6f6d5; border-color: #68d391; }
+        }
+        @keyframes flash-red {
+            0%, 100% { background-color: #fff5f5; border-color: #feb2b2; }
+            50% { background-color: #fed7d7; border-color: #fc8181; }
+        }
+        .choice-label {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .choice-label:hover {
+            background-color: #f7fafc;
+            border-color: #cbd5e0;
+        }
+        .choice-label input {
+            margin-right: 0.75rem;
+        }
+        
+        /* Disable text selection */
+        * {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+        
+        /* Allow text selection for input fields */
+        input, textarea {
+            -webkit-user-select: text;
+            -moz-user-select: text;
+            -ms-user-select: text;
+            user-select: text;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+    <div class="container mx-auto p-4 sm:p-6 md:p-8 max-w-4xl">
+        <header class="mb-6">
+            <h1 class="text-3xl font-bold text-gray-900">Linear Momentum Problem</h1>
+        </header>
+
+        <!-- Problem Statement Section -->
+        <div id="problem-statement" class="bg-white p-6 rounded-lg shadow-md mb-6">
+            <h2 class="text-xl font-semibold mb-4">Problem Scenario</h2>
+            
+            <img src="images/part 1.png" alt="Diagram of the problem setup showing a fluid jet hitting an angled plate." class="rounded-lg shadow-sm w-full mb-6">
+            
+            <p class="mb-4">
+                A fire extinguisher directs a stream of liquid onto a flat plate (the Declaration of Independence), which is held at an angle. We need to analyze the forces involved, both when the plate is stationary and when it's moving.
+            </p>
+            <div class="bg-gray-100 p-4 rounded-md">
+                <h3 class="font-semibold mb-2">Given Parameters:</h3>
+                <ul class="list-disc list-inside space-y-1 text-sm">
+                    <li>Mass flow rate (\(\dot{m}\)): <strong class="font-semibold">0.6 kg/s</strong></li>
+                    <li>Fluid density (\(\rho\)): <strong class="font-semibold">998 kg/m³</strong></li>
+                    <li>Stream diameter (\(D_s\)): <strong class="font-semibold">0.01 m</strong></li>
+                    <li>Plate angle (\(\theta_1\)): <strong class="font-semibold">60°</strong></li>
+                    <li>Flow split: <strong class="font-semibold">1/4</strong> up/right (B), <strong class="font-semibold">3/4</strong> down/left (C)</li>
+                    <li>Cage's velocity (Part 2): <strong class="font-semibold">1 m/s</strong> to the right</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Interactive Step Section -->
+        <div id="interactive-section" class="bg-white p-6 rounded-lg shadow-md">
+            <div id="step-container">
+                <!-- Content will be dynamically inserted here by JavaScript -->
+            </div>
+            <div id="feedback-container" class="mt-4 p-4 rounded-md text-sm">
+                <!-- Feedback will be dynamically inserted here -->
+            </div>
+        </div>
+        
+        <!-- Completion Message -->
+        <div id="completion-message" class="hidden bg-green-100 border-l-4 border-green-500 text-green-700 p-6 rounded-lg shadow-md mt-6">
+            <h2 class="text-xl font-bold">Congratulations!</h2>
+            <p>You have successfully completed the entire problem. You've analyzed the forces on both a stationary and moving control volume. Great work!</p>
+            <button onclick="restartProblem()" class="mt-4 bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg transition-colors">
+                Try Again
+            </button>
+        </div>
+
+    </div>
+
+    <script>
+        // --- BROWSER INSPECTION PROTECTION ---
+        (function() {
+            // Disable right-click context menu
+            document.addEventListener('contextmenu', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Disable keyboard shortcuts for developer tools
+            document.addEventListener('keydown', function(e) {
+                // Allow input in form fields
+                if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
+                    return true;
+                }
+                
+                // F12 key
+                if (e.keyCode === 123) {
+                    e.preventDefault();
+                    return false;
+                }
+                // Ctrl+Shift+I (Chrome DevTools)
+                if (e.ctrlKey && e.shiftKey && e.keyCode === 73) {
+                    e.preventDefault();
+                    return false;
+                }
+                // Ctrl+Shift+J (Chrome Console)
+                if (e.ctrlKey && e.shiftKey && e.keyCode === 74) {
+                    e.preventDefault();
+                    return false;
+                }
+                // Ctrl+U (View Source)
+                if (e.ctrlKey && e.keyCode === 85) {
+                    e.preventDefault();
+                    return false;
+                }
+                // Ctrl+Shift+C (Chrome Elements)
+                if (e.ctrlKey && e.shiftKey && e.keyCode === 67) {
+                    e.preventDefault();
+                    return false;
+                }
+                // Ctrl+S (Save)
+                if (e.ctrlKey && e.keyCode === 83) {
+                    e.preventDefault();
+                    return false;
+                }
+                // Ctrl+P (Print)
+                if (e.ctrlKey && e.keyCode === 80) {
+                    e.preventDefault();
+                    return false;
+                }
+            });
+            
+            // Disable developer tools detection
+            let devtools = {
+                open: false,
+                orientation: null
+            };
+            
+            setInterval(function() {
+                const threshold = 160;
+                if (window.outerHeight - window.innerHeight > threshold || 
+                    window.outerWidth - window.innerWidth > threshold) {
+                    if (!devtools.open) {
+                        devtools.open = true;
+                        document.body.innerHTML = '<div style="text-align: center; padding: 50px; font-size: 24px;">Developer tools detected. This page is protected.</div>';
+                    }
+                } else {
+                    devtools.open = false;
+                }
+            }, 500);
+            
+            // Disable console access
+            Object.defineProperty(window, 'console', {
+                value: {
+                    log: function() {},
+                    warn: function() {},
+                    error: function() {},
+                    info: function() {},
+                    debug: function() {}
+                },
+                writable: false,
+                configurable: false
+            });
+            
+            // Disable alert, confirm, prompt
+            window.alert = function() {};
+            window.confirm = function() { return false; };
+            window.prompt = function() { return null; };
+            
+            // Disable eval and Function constructor
+            window.eval = function() {};
+            window.Function = function() {};
+            
+            // Disable setTimeout and setInterval for debugging
+            const originalSetTimeout = window.setTimeout;
+            const originalSetInterval = window.setInterval;
+            window.setTimeout = function() {};
+            window.setInterval = function() {};
+            
+            // Re-enable setTimeout and setInterval for legitimate use
+            setTimeout(function() {
+                window.setTimeout = originalSetTimeout;
+                window.setInterval = originalSetInterval;
+            }, 1000);
+            
+            // Additional protection: Disable view source
+            document.addEventListener('keydown', function(e) {
+                if (e.ctrlKey && e.keyCode === 85) { // Ctrl+U
+                    e.preventDefault();
+                    return false;
+                }
+            });
+            
+            // Disable drag and drop
+            document.addEventListener('dragstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Disable copy
+            document.addEventListener('copy', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+        })();
+        
+        // --- DATA STRUCTURE FOR THE ADAPTIVE PROBLEM ---
+        const problemSteps = {
+            // --- PART 1: STATIONARY PLATE ---
+            1: {
+                title: "Part 1: Stationary Plate",
+                question: "What is the velocity V_A of the liquid stream in m/s when Nic Cage is at rest? Round to 2 decimal places.",
+                type: 'number',
+                unit: "m/s",
+                answer: 7.65,
+                tolerance: 0.02,
+                correctFeedback: "Correct! The velocity is found using V = ṁ / (ρA), where A = (π/4)d². This gives V ≈ 7.65 m/s.",
+                incorrectFeedback: "Not quite. First, calculate the stream's cross-sectional area (A = πd²/4). Then, use the mass flow rate equation (ṁ = ρAV) to solve for the velocity V.",
+                nextStepId: 2
+            },
+            2: {
+                title: "Part 1: Stationary Plate",
+                question: "What is the reaction force, Rx, Nic Cage must hold to keep himself still as the liquid hits the angled plate? Remember to include the correct sign. Round to 2 decimal places.",
+                type: 'number',
+                unit: "N",
+                answer: -5.74,
+                tolerance: 0.02,
+                correctFeedback: "Excellent! The force the fluid exerts on the plate is +5.74 N, so the reaction force Cage must apply is -5.74 N.",
+                incorrectFeedback: "That's not it. Use the linear momentum equation for the x-direction. Find the momentum rates in and out, paying close attention to the directions of the exiting streams. The reaction force will be equal and opposite to the force the fluid exerts on the plate.",
+                nextStepId: 3
+            },
+            // --- REMEDIAL PATH FOR STEP 2 ---
+            '2a': {
+                title: "Check Your Understanding: Mass Flow Rates (Stationary)",
+                question: "It looks like you're having trouble with the force calculation. Let's break it down. What is the mass flow rate entering the control volume at location A? This is given in the problem statement.",
+                type: 'number',
+                unit: "kg/s",
+                answer: 0.6,
+                tolerance: 0.01,
+                correctFeedback: "Correct. The total mass flow rate is 0.6 kg/s.",
+                incorrectFeedback: "Check the 'Given Parameters' section. The total mass flow rate from the extinguisher is stated there.",
+                nextStepId: '2b'
+            },
+            '2b': {
+                title: "Check Your Understanding: Mass Flow Rates (Stationary)",
+                question: "Good. Now, what is the mass flow rate exiting the control volume at location B? The problem states it's 1/4 of the total.",
+                type: 'number',
+                unit: "kg/s",
+                answer: 0.15,
+                tolerance: 0.01,
+                correctFeedback: "Exactly. ṁ_B = (1/4) * 0.6 = 0.15 kg/s.",
+                incorrectFeedback: "Calculate 1/4 of the total mass flow rate (0.6 kg/s).",
+                nextStepId: '2c'
+            },
+            '2c': {
+                title: "Check Your Understanding: Mass Flow Rates (Stationary)",
+                question: "Excellent. Finally, what is the mass flow rate exiting the control volume at location C? This is the remaining 3/4 of the total.",
+                type: 'number',
+                unit: "kg/s",
+                answer: 0.45,
+                tolerance: 0.01,
+                correctFeedback: "Perfect. ṁ_C = (3/4) * 0.6 = 0.45 kg/s. Now let's look at the equation itself.",
+                incorrectFeedback: "Calculate 3/4 of the total mass flow rate (0.6 kg/s).",
+                nextStepId: '2d'
+            },
+            '2d': {
+                title: "Check Your Understanding: Symbolic Equation",
+                question: "Choose the correct equation for R_x, in symbolic terms:",
+                type: 'multiple-choice',
+                choices: [
+                    "\\( R_x = -\\dot{m}_A V_A + \\dot{m}_B V_B \\cos(\\theta) + \\dot{m}_C V_C \\cos(\\theta) \\)",
+                    "\\( R_x = \\dot{m}_A V_A + \\dot{m}_B V_B \\cos(\\theta) + \\dot{m}_C V_C \\cos(\\theta) \\)",
+                    "\\( R_x = -\\dot{m}_A V_A + \\dot{m}_B V_B \\cos(\\theta) + \\dot{m}_C V_C \\cos(\\theta - 180^{\\circ}) \\)",
+                    "\\( R_x = \\dot{m}_A V_A + \\dot{m}_B V_B \\cos(\\theta) + \\dot{m}_C V_C \\cos(\\theta - 180^{\\circ}) \\)",
+                    "\\( R_x = \\dot{m}_B V_B \\cos(\\theta) + \\dot{m}_C V_C \\cos(\\theta) \\)",
+                    "\\( R_x = -\\dot{m}_A V_A + 2 \\dot{m}_B V_B \\cos(\\theta) \\)"
+                ],
+                answer: 2, // Corresponds to the 3rd option (index 2)
+                correctFeedback: "That's the one! The key is that the angle for the flow at C is offset by 180 degrees from the flow at B, which correctly captures the negative x-velocity. Now, let's try the original question again.",
+                incorrectFeedback: [
+                    "This is incorrect because at location C, you must use cos(θ - 180°) instead of cos(θ) to account for the reversed direction. Alternatively, you could use -cos(θ) for the C-term, as the x-component of velocity is negative.",
+                    "This is incorrect for two reasons. First, the inlet term at location A must have a negative sign. Second, the x-component of velocity at location C is negative, so that term must also be negative.",
+                    "This is incorrect because the inlet term at location A must have a negative sign.",
+                    "This is incorrect because the inlet term (the A-location term) is missing entirely.",
+                    "This is incorrect because it implies the mass flow rate at B is the same as at C (ṁ_B = ṁ_C), which is not the case."
+                ],
+                nextStepId: 2
+            },
+            // --- PART 2: MOVING PLATE ---
+            3: {
+                title: "Part 2: Moving Plate",
+                question: "To analyze the moving plate, we use a moving control volume. What is the velocity of the fluid jet *relative* to the moving plate (V_rel)? Round to 2 decimal places.",
+                type: 'number',
+                unit: "m/s",
+                answer: 6.65,
+                tolerance: 0.02,
+                correctFeedback: "Correct! The relative velocity is V_rel = V_jet - V_plate = 7.65 - 1 = 6.65 m/s. This is the velocity we use for the moving control volume analysis.",
+                incorrectFeedback: "Not quite. When the plate moves away from the jet, the relative velocity is the jet's absolute velocity minus the plate's velocity.",
+                nextStepId: 4
+            },
+            4: {
+                title: "Part 2: Moving Plate",
+                question: "What is the x-component of force the liquid exerts on the Declaration as it moves? Remember to include the correct sign. Round to 3 decimal places.",
+                type: 'number',
+                unit: "N",
+                answer: 4.329,
+                tolerance: 0.044, // ~1% tolerance
+                correctFeedback: "You've got it! The force is calculated using the momentum equation with relative velocities and the intercepted mass flow rate.",
+                incorrectFeedback: "Not quite. First, find the relative velocity. Then find the mass flow rate intercepted by the moving plate (ṁ_r = ρAV_rel). Finally, apply the momentum equation using these relative values.",
+                nextStepId: 'complete'
+            },
+            // --- REMEDIAL PATH FOR STEP 4 ---
+            '4a': {
+                title: "Check Your Understanding: Mass Flow Rates (Moving)",
+                question: "It seems you're having trouble with the moving control volume. Let's break it down. What is the mass flow rate *entering* the moving control volume at location A? This is the intercepted mass flow rate, ṁ_r = ρAV_rel. Round to 3 decimal places.",
+                type: 'number',
+                unit: "kg/s",
+                answer: 0.521,
+                tolerance: 0.002,
+                correctFeedback: "Correct. Because the plate is moving away, it intercepts less mass. The intercepted rate is ṁ_r = 998 * (π/4)(0.01)² * 6.65 ≈ 0.521 kg/s.",
+                incorrectFeedback: "Be sure to use the relative velocity (V_rel = 6.65 m/s) to calculate the intercepted mass flow rate (ṁ_r = ρAV_rel).",
+                nextStepId: '4b'
+            },
+            '4b': {
+                title: "Check Your Understanding: Mass Flow Rates (Moving)",
+                question: "Good. Now, what is the mass flow rate *exiting* the control volume at location B? This will be 1/4 of the intercepted mass flow rate (0.521 kg/s). Round to 3 decimal places.",
+                type: 'number',
+                unit: "kg/s",
+                answer: 0.130,
+                tolerance: 0.002,
+                correctFeedback: "Exactly. ṁ_B,rel = (1/4) * 0.521 ≈ 0.130 kg/s.",
+                incorrectFeedback: "Calculate 1/4 of the intercepted mass flow rate (0.521 kg/s).",
+                nextStepId: '4c'
+            },
+            '4c': {
+                title: "Check Your Understanding: Mass Flow Rates (Moving)",
+                question: "Excellent. Finally, what is the mass flow rate *exiting* the control volume at location C? This is the remaining 3/4 of the intercepted mass flow rate. Round to 3 decimal places.",
+                type: 'number',
+                unit: "kg/s",
+                answer: 0.391,
+                tolerance: 0.002,
+                correctFeedback: "Perfect. ṁ_C,rel = (3/4) * 0.521 ≈ 0.391 kg/s. Now let's check the relative speeds.",
+                incorrectFeedback: "Calculate 3/4 of the intercepted mass flow rate (0.521 kg/s).",
+                nextStepId: '4d'
+            },
+             '4d': {
+                title: "Check Your Understanding: Relative Speeds",
+                question: "One last check before the formula. A key assumption is that the speed of the fluid relative to the plate is the same at A, B, and C. What is this relative speed? (V_rel)",
+                type: 'number',
+                unit: "m/s",
+                answer: 6.65,
+                tolerance: 0.02,
+                correctFeedback: "Correct. The relative speed is constant across the plate. Now let's look at the full equation.",
+                incorrectFeedback: "The relative speed is the value you calculated in the first step of Part 2. It is constant for the fluid entering and exiting the moving control volume.",
+                nextStepId: '4e'
+            },
+            '4e': {
+                title: "Check Your Understanding: Symbolic Equation (Moving)",
+                question: "Choose the correct equation for the new force, R_x,new, in symbolic terms:",
+                type: 'multiple-choice',
+                choices: [
+                    "\\( R_{x,new} = -\\dot{m}_A V_A + \\dot{m}_{B,rel} V_{B,rel} \\cos(\\theta) + \\dot{m}_{C,rel} V_{C,rel} \\cos(\\theta) \\)",
+                    "\\( R_{x,new} = \\dot{m}_{A,rel} V_{A,rel} + \\dot{m}_{B,rel} V_{B,rel} \\cos(\\theta) + \\dot{m}_{C,rel} V_{C,rel} \\cos(\\theta - 180^{\\circ}) \\)",
+                    "\\( R_{x,new} = -\\dot{m}_A V_{A,rel} + \\dot{m}_B V_{B,rel} \\cos(\\theta) + \\dot{m}_C V_{C,rel} \\cos(\\theta - 180^{\\circ}) \\)",
+                    "\\( R_{x,new} = -\\dot{m}_{A,rel} V_{A,rel} + \\dot{m}_{B,rel} V_B \\cos(\\theta) + \\dot{m}_{C,rel} V_C \\cos(\\theta - 180^{\\circ}) \\)",
+                    "\\( R_{x,new} = -\\dot{m}_{A,rel} V_{A,rel} + \\dot{m}_{B,rel} V_{B,rel} \\cos(\\theta) + \\dot{m}_{C,rel} V_{C,rel} \\cos(\\theta - 180^{\\circ}) \\)",
+                    "\\( R_{x,new} = -\\dot{m}_A V_A + \\dot{m}_{B,rel} V_{B,rel} \\cos(\\theta) + \\dot{m}_{C,rel} V_{C,rel} \\cos(\\theta - 180^{\\circ}) \\)"
+                ],
+                answer: 4, // Corresponds to the 5th option (index 4)
+                correctFeedback: "That's it! For a moving control volume, *every* term in the momentum equation must use relative mass flow rates and relative velocities. Now you have all the pieces. Let's try the force calculation again.",
+                incorrectFeedback: [
+                   "This is incorrect because it mixes the absolute mass flow rate exiting the at-rest hose (ṁ_A) with relative terms for the outlets (B and C). All terms must be relative.",
+                   "This is incorrect because the inlet term must have a negative sign.",
+                   "This is incorrect because it mixes absolute mass flow rates exiting the at-rest hose (ṁ_A, ṁ_B, ṁ_C) with relative velocities. For a moving control volume, both the mass flow rates and the velocities must be relative to the control volume.",
+                   "This is close, but it mixes a relative mass flow rate for the inlet (A) with absolute velocities for the outlets (B and C). All terms must be relative.",
+                   "This is incorrect because it mixes the absolute mass flow rate and velocity exiting the at-rest hose (ṁ_A, V_A) with relative terms at the outlet."
+                ],
+                nextStepId: 4
+            }
+        };
+
+        // --- APPLICATION LOGIC ---
+        let currentStepId = 1;
+        let rxIncorrectAttempts = 0;
+        let movingRxIncorrectAttempts = 0;
+        let stepHistory = [];
+        let userAnswers = {};
+
+        const stepContainer = document.getElementById('step-container');
+        const feedbackContainer = document.getElementById('feedback-container');
+        const completionMessage = document.getElementById('completion-message');
+        const problemStatementDiv = document.getElementById('problem-statement');
+
+        function renderStep(stepId) {
+            const step = problemSteps[stepId];
+            if (!step) {
+                console.error("Step not found:", stepId);
+                return;
+            }
+            
+            let imageHTML = '';
+            // Conditionally add image for Part 2 steps AND hide/show problem statement
+            const part2Steps = ['3', '4', '4a', '4b', '4c', '4d', '4e'];
+            if (part2Steps.includes(stepId.toString())) {
+                problemStatementDiv.classList.add('hidden'); // Hide the main problem statement
+                imageHTML = `<img src="images/Part 2.png" alt="Diagram of the moving plate scenario." class="rounded-lg shadow-sm w-full mb-4">`;
+            } else {
+                 problemStatementDiv.classList.remove('hidden'); // Show it for Part 1
+            }
+
+            let inputHTML = '';
+            if (step.type === 'number') {
+                inputHTML += `
+                    <div class="flex items-center gap-2">
+                        <input type="number" id="answer-input" class="block w-full md:w-1/2 px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" placeholder="Enter your answer">
+                        <span class="text-gray-500">${step.unit}</span>
+                    </div>`;
+            } else if (step.type === 'multiple-choice') {
+                inputHTML += '<div class="space-y-3">';
+                step.choices.forEach((choice, index) => {
+                    inputHTML += `
+                        <label class="choice-label">
+                            <input type="radio" name="mc-choice" value="${index}" class="form-radio h-4 w-4 text-blue-600">
+                            <span>${choice}</span>
+                        </label>`;
+                });
+                inputHTML += '</div>';
+            }
+            
+            const backButtonHTML = stepHistory.length > 0 ? `
+                <button onclick="goBack()" class="mt-4 bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-lg transition-colors">
+                    Back
+                </button>
+            ` : '';
+
+            stepContainer.innerHTML = `
+                ${imageHTML}
+                <h3 class="text-lg font-semibold text-blue-600 mb-1">${step.title}</h3>
+                <p class="text-gray-700 mb-4">${step.question}</p>
+                ${inputHTML}
+                <div class="flex space-x-2">
+                    ${backButtonHTML}
+                    <button onclick="checkAnswer()" class="mt-4 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition-colors">
+                        Submit Answer
+                    </button>
+                </div>
+            `;
+            
+            if (typeof MathJax !== 'undefined') {
+                MathJax.typesetPromise([stepContainer]);
+            }
+            
+            // Restore previous answer if it exists
+            if (userAnswers[stepId]) {
+                 if (step.type === 'number') {
+                    document.getElementById('answer-input').value = userAnswers[stepId];
+                 } else if (step.type === 'multiple-choice') {
+                    const radioButtons = document.querySelectorAll('input[name="mc-choice"]');
+                    radioButtons[userAnswers[stepId]].checked = true;
+                 }
+            }
+
+            const input = document.getElementById('answer-input');
+            if (input) {
+                input.addEventListener('keyup', function(event) {
+                    if (event.key === 'Enter') {
+                        event.preventDefault();
+                        checkAnswer();
+                    }
+                });
+                input.focus();
+            }
+        }
+        
+        function goBack() {
+            if (stepHistory.length > 0) {
+                currentStepId = stepHistory.pop();
+                renderStep(currentStepId);
+                feedbackContainer.innerHTML = '';
+                feedbackContainer.className = 'mt-4 p-4 rounded-md text-sm';
+            }
+        }
+
+        function proceedToNextStep() {
+            const step = problemSteps[currentStepId];
+            stepHistory.push(currentStepId); // Add current step to history before moving on
+            
+            if (step.nextStepId === 'complete') {
+                document.getElementById('interactive-section').classList.add('hidden');
+                completionMessage.classList.remove('hidden');
+            } else {
+                currentStepId = step.nextStepId;
+                renderStep(currentStepId);
+                feedbackContainer.innerHTML = '';
+                feedbackContainer.className = 'mt-4 p-4 rounded-md text-sm';
+            }
+        }
+
+        function checkAnswer() {
+            const step = problemSteps[currentStepId];
+            
+            feedbackContainer.classList.remove('correct-answer', 'incorrect-answer');
+            void feedbackContainer.offsetWidth; // Trigger reflow to restart animation
+
+            let isCorrect = false;
+            let userAnswerNum = NaN;
+            let selectedChoiceIndex = -1;
+
+            if (step.type === 'number') {
+                const inputElement = document.getElementById('answer-input');
+                userAnswerNum = parseFloat(inputElement.value);
+                userAnswers[currentStepId] = userAnswerNum; // Save answer
+                if (isNaN(userAnswerNum)) {
+                    feedbackContainer.innerHTML = `<p class="font-semibold text-yellow-700">Please enter a numerical answer.</p>`;
+                    feedbackContainer.className = 'mt-4 p-4 rounded-md text-sm bg-yellow-100 border border-yellow-300';
+                    return;
+                }
+                if (Math.abs(userAnswerNum - step.answer) <= step.tolerance) {
+                    isCorrect = true;
+                }
+            } else if (step.type === 'multiple-choice') {
+                const selectedChoice = document.querySelector('input[name="mc-choice"]:checked');
+                if (selectedChoice) {
+                    selectedChoiceIndex = parseInt(selectedChoice.value);
+                    userAnswers[currentStepId] = selectedChoiceIndex; // Save answer
+                    if (selectedChoiceIndex === step.answer) {
+                        isCorrect = true;
+                    }
+                } else {
+                    feedbackContainer.innerHTML = `<p class="font-semibold text-yellow-700">Please select an option.</p>`;
+                    feedbackContainer.className = 'mt-4 p-4 rounded-md text-sm bg-yellow-100 border border-yellow-300';
+                    return;
+                }
+            }
+
+            if (isCorrect) {
+                if (currentStepId === '2d') { rxIncorrectAttempts = 0; }
+                if (currentStepId === '4e') { movingRxIncorrectAttempts = 0; }
+                
+                feedbackContainer.innerHTML = `
+                    <p class="font-semibold text-green-800">Correct!</p>
+                    <p>${step.correctFeedback}</p>
+                    <button onclick="proceedToNextStep()" class="mt-4 bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg transition-colors">
+                        Next
+                    </button>
+                `;
+                feedbackContainer.className = 'mt-4 p-4 rounded-md text-sm bg-green-100 border border-green-300 correct-answer';
+                
+            } else {
+                // Incorrect Answer
+                if (currentStepId === 2) {
+                    rxIncorrectAttempts++;
+                    if (rxIncorrectAttempts > 3) {
+                        stepHistory.push(currentStepId);
+                        currentStepId = '2a';
+                        renderStep(currentStepId);
+                        feedbackContainer.innerHTML = '';
+                        feedbackContainer.className = 'mt-4 p-4 rounded-md text-sm';
+                        return;
+                    }
+                } else if (currentStepId === 4) {
+                    movingRxIncorrectAttempts++;
+                     if (movingRxIncorrectAttempts > 3) {
+                        stepHistory.push(currentStepId);
+                        currentStepId = '4a';
+                        renderStep(currentStepId);
+                        feedbackContainer.innerHTML = '';
+                        feedbackContainer.className = 'mt-4 p-4 rounded-md text-sm';
+                        return;
+                    }
+                }
+
+                let incorrectFeedbackHTML = `<p class="font-semibold text-red-800">Incorrect.</p><p>${step.incorrectFeedback}</p>`; // Default incorrect message
+
+                // --- Custom feedback logic ---
+                if (step.type === 'multiple-choice' && selectedChoiceIndex !== -1) {
+                    let feedbackIndex = selectedChoiceIndex < step.answer ? selectedChoiceIndex : selectedChoiceIndex - 1;
+                    incorrectFeedbackHTML = `<p class="font-semibold text-red-800">Incorrect.</p><p>${step.incorrectFeedback[feedbackIndex]}</p>`;
+                } else if (!isNaN(userAnswerNum)) {
+                    if (currentStepId === 2) { // Logic for Rx question
+                        if (userAnswerNum >= 5.74 * 0.98 && userAnswerNum <= 5.74 * 1.02) {
+                            incorrectFeedbackHTML = `<p class="font-semibold text-red-800">Incorrect.</p><p>You have calculated the correct magnitude, but you have found the force the fluid exerts *on the plate*. The question asks for the *reaction force* Nic Cage must apply, which is equal and opposite.</p>`;
+                        } else if (userAnswerNum >= 6.89 * 0.98 && userAnswerNum <= 6.89 * 1.02) {
+                            incorrectFeedbackHTML = `<p class="font-semibold text-red-800">Incorrect.</p><p>You likely have multiple sign errors in front of one (or some) of your inlet or outlet terms. Remember that inlet terms have negative signs in front of them, while outlet terms have positive signs in front. Try again.</p>`;
+                        } else if (userAnswerNum >= 3.44 * 0.98 && userAnswerNum <= 3.44 * 1.02) {
+                            incorrectFeedbackHTML = `<p class="font-semibold text-red-800">Incorrect.</p><p>You are likely missing a negative sign in front of your inlet term (that is, at location A). Remember that inlet terms have negative signs in front of them, while outlet terms have positive signs in front. Try again.</p>`;
+                        } else if (userAnswerNum >= -1.036 * 1.02 && userAnswerNum <= -1.036 * 0.98) {
+                            incorrectFeedbackHTML = `<p class="font-semibold text-red-800">Incorrect.</p><p>Most likely, you used sine instead of cosine for the angle at Location C. Try again.</p>`;
+                        } else if (userAnswerNum >= -2.296 * 1.02 && userAnswerNum <= -2.296 * 0.98) {
+                            incorrectFeedbackHTML = `<p class="font-semibold text-red-800">Incorrect.</p><p>You likely used the wrong angle for the stream exiting location B or location C. At location C in particular, you may have used cos(60°) or cos(-60°) instead of cos(120°), or cos(-120°). This can also be interpreted as a sign error; that is, you may have used cos(60°) for location C instead of -cos(60°). Remember that -cos(60°) and cos(-60°) are different.</p>`;
+                        } else if (userAnswerNum >= -1.1482 * 1.02 && userAnswerNum <= -1.1482 * 0.98) {
+                            incorrectFeedbackHTML = `<p class="font-semibold text-red-800">Incorrect.</p><p>Are you including all inlet and outlet terms? You must include terms for locations A, B, and C when calculating linear momentum. Try again.</p>`;
+                        } else if (userAnswerNum >= -6.89 * 1.02 && userAnswerNum <= -6.89 * 0.98) {
+                            incorrectFeedbackHTML = `<p class="font-semibold text-red-800">Incorrect.</p><p>You likely have a sign error in front of one of your inlet or outlet terms. Remember that inlet terms have negative signs in front of them, while outlet terms have positive signs in front. Try again.</p>`;
+                        }
+                    } else if (currentStepId === 4) { // Logic for Moving Force question
+                        if (Math.abs(userAnswerNum - 4.991) <= 0.02 * 4.991) {
+                             incorrectFeedbackHTML = `<p class="font-semibold text-red-800">Incorrect.</p><p>You are likely using the incorrect mass flow rate for this moving control volume. Remember that because Nic Cage is running away, the mass flow rate that hits him (and all mass flows that exits the control volume) will be different than the mass flow rates of part 1. This also means the speed of the fluid at locations A, B, and C are different than they were in Part 1 (but still equal to each other). Try again.</p>`;
+                        } else if (Math.abs(userAnswerNum - 7.334) <= 0.02 * 7.334) {
+                             incorrectFeedbackHTML = `<p class="font-semibold text-red-800">Incorrect.</p><p>You are likely using the wrong relative velocity and mass flow rate for this situation. If Nic Cage is running AWAY from Sean Bean, the mass flow rate and stream velocity entering (and exiting) the control volume will be lower than in the at-rest scenario. Try again.</p>`;
+                        } else if (Math.abs(userAnswerNum - 4.4694) <= 0.02 * 4.4694) {
+                             incorrectFeedbackHTML = `<p class="font-semibold text-red-800">Incorrect.</p><p>Most likely, you are using the incorrect mass flow rate and/or stream speeds at locations B and C. When the control volume moves, the relative mass flow rate and relative fluid speeds change at locations A, B, and C, not JUST location A. Try again.</p>`;
+                        } else if (Math.abs(userAnswerNum - 4.6194) <= 0.02 * 4.6194) {
+                             incorrectFeedbackHTML = `<p class="font-semibold text-red-800">Incorrect.</p><p>Most likely, you are using the incorrect mass flow rate and/or stream velocities at locations B and C. When the control volume moves, the relative mass flow rate and relative velocities change at locations A, B, and C, not just location A. Try again.</p>`;
+                        } else if (Math.abs(userAnswerNum - (-4.329)) <= 0.044) { // 1% tolerance for the negative value
+                            incorrectFeedbackHTML = `<p class="font-semibold text-red-800">Incorrect.</p><p>You have the correct magnitude, but the wrong sign. The net force from the fluid pushes the plate to the right, so the force should be positive.</p>`;
+                        }
+                    }
+                }
+                
+                feedbackContainer.innerHTML = incorrectFeedbackHTML;
+                feedbackContainer.className = 'mt-4 p-4 rounded-md text-sm bg-red-100 border border-red-300 incorrect-answer';
+                const inputElement = document.getElementById('answer-input');
+                if(inputElement) inputElement.focus();
+            }
+        }
+        
+        function restartProblem() {
+            currentStepId = 1;
+            rxIncorrectAttempts = 0;
+            movingRxIncorrectAttempts = 0;
+            stepHistory = [];
+            userAnswers = {};
+            completionMessage.classList.add('hidden');
+            document.getElementById('interactive-section').classList.remove('hidden');
+            feedbackContainer.innerHTML = '';
+            feedbackContainer.className = 'mt-4 p-4 rounded-md text-sm';
+            renderStep(currentStepId);
+        }
+
+        // Initial render
+        window.onload = () => {
+            renderStep(currentStepId);
+        };
+    </script>
+
+</body>
+</html>
