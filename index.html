@@ -7,6 +7,51 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>
+        // Immediate protection - runs before anything else
+        (function() {
+            // Disable console immediately
+            Object.defineProperty(window, 'console', {
+                value: {},
+                writable: false,
+                configurable: false
+            });
+            
+            // Disable developer tools immediately
+            Object.defineProperty(window, 'devtools', {
+                value: {},
+                writable: false,
+                configurable: false
+            });
+            
+            // Disable debugging functions
+            window.alert = function() {};
+            window.confirm = function() { return false; };
+            window.prompt = function() { return null; };
+            window.eval = function() {};
+            window.Function = function() {};
+            
+            // Block immediate right-click
+            document.addEventListener('contextmenu', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                return false;
+            }, true);
+            
+            // Block immediate keyboard shortcuts
+            document.addEventListener('keydown', function(e) {
+                if (e.keyCode === 123 || // F12
+                    (e.ctrlKey && e.shiftKey && e.keyCode === 73) || // Ctrl+Shift+I
+                    (e.ctrlKey && e.shiftKey && e.keyCode === 74) || // Ctrl+Shift+J
+                    (e.ctrlKey && e.keyCode === 85) || // Ctrl+U
+                    (e.ctrlKey && e.shiftKey && e.keyCode === 67)) { // Ctrl+Shift+C
+                    e.preventDefault();
+                    e.stopPropagation();
+                    return false;
+                }
+            }, true);
+        })();
+    </script>
     <style>
         body {
             font-family: 'Inter', sans-serif;
@@ -49,6 +94,8 @@
             -moz-user-select: none;
             -ms-user-select: none;
             user-select: none;
+            -webkit-touch-callout: none;
+            -webkit-tap-highlight-color: transparent;
         }
         
         /* Allow text selection for input fields */
@@ -57,6 +104,28 @@
             -moz-user-select: text;
             -ms-user-select: text;
             user-select: text;
+        }
+        
+        /* Disable context menu */
+        * {
+            -webkit-context-menu: none;
+            -moz-context-menu: none;
+            context-menu: none;
+        }
+        
+        /* Disable image dragging */
+        img {
+            -webkit-user-drag: none;
+            -khtml-user-drag: none;
+            -moz-user-drag: none;
+            -o-user-drag: none;
+            user-drag: none;
+            pointer-events: none;
+        }
+        
+        /* Allow pointer events for interactive elements */
+        button, input, textarea, select, a {
+            pointer-events: auto;
         }
     </style>
 </head>
@@ -111,130 +180,210 @@
     </div>
 
     <script>
-        // --- BROWSER INSPECTION PROTECTION ---
+        // --- ENHANCED BROWSER INSPECTION PROTECTION ---
         (function() {
+            // Obfuscate function names and variables
+            const _0x4f2a = ['preventDefault', 'return', 'false', 'keyCode', 'ctrlKey', 'shiftKey', 'target', 'tagName', 'INPUT', 'TEXTAREA', 'addEventListener', 'keydown', 'contextmenu', 'dragstart', 'copy', 'body', 'innerHTML', 'text-align: center; padding: 50px; font-size: 24px;', 'Developer tools detected. This page is protected.', 'outerHeight', 'innerHeight', 'outerWidth', 'innerWidth', 'open', 'orientation', 'setInterval', 'console', 'log', 'warn', 'error', 'info', 'debug', 'writable', 'configurable', 'alert', 'confirm', 'prompt', 'eval', 'Function', 'setTimeout', 'setInterval'];
+            
             // Disable right-click context menu
-            document.addEventListener('contextmenu', function(e) {
-                e.preventDefault();
-                return false;
+            document[_0x4f2a[10]](_0x4f2a[12], function(e) {
+                e[_0x4f2a[0]]();
+                return _0x4f2a[2];
             });
             
-            // Disable keyboard shortcuts for developer tools
-            document.addEventListener('keydown', function(e) {
+            // Enhanced keyboard protection
+            document[_0x4f2a[10]](_0x4f2a[11], function(e) {
                 // Allow input in form fields
-                if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
+                if (e[_0x4f2a[7]] === _0x4f2a[8] || e[_0x4f2a[7]] === _0x4f2a[9]) {
                     return true;
                 }
                 
-                // F12 key
-                if (e.keyCode === 123) {
-                    e.preventDefault();
-                    return false;
+                // Block all developer tool shortcuts
+                const blockedKeys = [123, 73, 74, 85, 67, 83, 80, 69, 82, 70]; // F12, I, J, U, C, S, P, E, R, F
+                const blockedCombos = [
+                    {ctrl: true, shift: true, key: 73}, // Ctrl+Shift+I
+                    {ctrl: true, shift: true, key: 74}, // Ctrl+Shift+J
+                    {ctrl: true, shift: true, key: 67}, // Ctrl+Shift+C
+                    {ctrl: true, key: 85}, // Ctrl+U
+                    {ctrl: true, key: 83}, // Ctrl+S
+                    {ctrl: true, key: 80}, // Ctrl+P
+                    {ctrl: true, key: 69}, // Ctrl+E
+                    {ctrl: true, key: 82}, // Ctrl+R
+                    {ctrl: true, key: 70}, // Ctrl+F
+                    {shift: true, key: 123}, // Shift+F12
+                    {alt: true, key: 73}, // Alt+I
+                    {alt: true, key: 74}, // Alt+J
+                ];
+                
+                // Check for blocked keys
+                if (blockedKeys.includes(e[_0x4f2a[3]])) {
+                    e[_0x4f2a[0]]();
+                    return _0x4f2a[2];
                 }
-                // Ctrl+Shift+I (Chrome DevTools)
-                if (e.ctrlKey && e.shiftKey && e.keyCode === 73) {
-                    e.preventDefault();
-                    return false;
-                }
-                // Ctrl+Shift+J (Chrome Console)
-                if (e.ctrlKey && e.shiftKey && e.keyCode === 74) {
-                    e.preventDefault();
-                    return false;
-                }
-                // Ctrl+U (View Source)
-                if (e.ctrlKey && e.keyCode === 85) {
-                    e.preventDefault();
-                    return false;
-                }
-                // Ctrl+Shift+C (Chrome Elements)
-                if (e.ctrlKey && e.shiftKey && e.keyCode === 67) {
-                    e.preventDefault();
-                    return false;
-                }
-                // Ctrl+S (Save)
-                if (e.ctrlKey && e.keyCode === 83) {
-                    e.preventDefault();
-                    return false;
-                }
-                // Ctrl+P (Print)
-                if (e.ctrlKey && e.keyCode === 80) {
-                    e.preventDefault();
-                    return false;
+                
+                // Check for blocked combinations
+                for (let combo of blockedCombos) {
+                    if (e[_0x4f2a[3]] === combo.key && 
+                        (!combo.ctrl || e[_0x4f2a[4]]) && 
+                        (!combo.shift || e[_0x4f2a[5]]) && 
+                        (!combo.alt || e.altKey)) {
+                        e[_0x4f2a[0]]();
+                        return _0x4f2a[2];
+                    }
                 }
             });
             
-            // Disable developer tools detection
+            // Multiple detection methods for developer tools
             let devtools = {
                 open: false,
-                orientation: null
+                orientation: null,
+                detectionCount: 0
             };
             
-            setInterval(function() {
+            // Method 1: Size detection
+            function detectDevTools() {
                 const threshold = 160;
-                if (window.outerHeight - window.innerHeight > threshold || 
-                    window.outerWidth - window.innerWidth > threshold) {
-                    if (!devtools.open) {
-                        devtools.open = true;
-                        document.body.innerHTML = '<div style="text-align: center; padding: 50px; font-size: 24px;">Developer tools detected. This page is protected.</div>';
+                const widthThreshold = 160;
+                
+                if (window[_0x4f2a[19]] - window[_0x4f2a[20]] > threshold || 
+                    window[_0x4f2a[21]] - window[_0x4f2a[22]] > widthThreshold) {
+                    devtools.detectionCount++;
+                    if (devtools.detectionCount > 2 && !devtools[_0x4f2a[23]]) {
+                        devtools[_0x4f2a[23]] = true;
+                        document[_0x4f2a[15]][_0x4f2a[16]] = '<div style="' + _0x4f2a[17] + '">' + _0x4f2a[18] + '</div>';
+                        return;
                     }
                 } else {
-                    devtools.open = false;
+                    devtools.detectionCount = Math.max(0, devtools.detectionCount - 1);
                 }
-            }, 500);
+            }
             
-            // Disable console access
-            Object.defineProperty(window, 'console', {
+            // Method 2: Console timing detection
+            function detectConsole() {
+                const start = performance.now();
+                console.log('%c', 'color: transparent');
+                const end = performance.now();
+                if (end - start > 100) {
+                    devtools.detectionCount++;
+                    if (devtools.detectionCount > 2 && !devtools[_0x4f2a[23]]) {
+                        devtools[_0x4f2a[23]] = true;
+                        document[_0x4f2a[15]][_0x4f2a[16]] = '<div style="' + _0x4f2a[17] + '">' + _0x4f2a[18] + '</div>';
+                    }
+                }
+            }
+            
+            // Method 3: Firebug detection
+            function detectFirebug() {
+                if (window.console && (window.console.firebug || window.console.exception)) {
+                    devtools.detectionCount++;
+                    if (devtools.detectionCount > 2 && !devtools[_0x4f2a[23]]) {
+                        devtools[_0x4f2a[23]] = true;
+                        document[_0x4f2a[15]][_0x4f2a[16]] = '<div style="' + _0x4f2a[17] + '">' + _0x4f2a[18] + '</div>';
+                    }
+                }
+            }
+            
+            // Run detection methods
+            setInterval(detectDevTools, 100);
+            setInterval(detectConsole, 200);
+            setInterval(detectFirebug, 300);
+            
+            // Disable console access completely
+            Object.defineProperty(window, _0x4f2a[24], {
                 value: {
-                    log: function() {},
-                    warn: function() {},
-                    error: function() {},
-                    info: function() {},
-                    debug: function() {}
+                    [_0x4f2a[25]]: function() {},
+                    [_0x4f2a[26]]: function() {},
+                    [_0x4f2a[27]]: function() {},
+                    [_0x4f2a[28]]: function() {},
+                    [_0x4f2a[29]]: function() {},
+                    clear: function() {},
+                    table: function() {},
+                    trace: function() {},
+                    group: function() {},
+                    groupEnd: function() {},
+                    time: function() {},
+                    timeEnd: function() {},
+                    count: function() {},
+                    dir: function() {},
+                    dirxml: function() {},
+                    profile: function() {},
+                    profileEnd: function() {},
+                    timeStamp: function() {},
+                    memory: function() {},
+                    markTimeline: function() {},
+                    timeline: function() {},
+                    timelineEnd: function() {}
                 },
-                writable: false,
-                configurable: false
+                [_0x4f2a[30]]: false,
+                [_0x4f2a[31]]: false
             });
             
-            // Disable alert, confirm, prompt
-            window.alert = function() {};
-            window.confirm = function() { return false; };
-            window.prompt = function() { return null; };
+            // Disable all debugging functions
+            window[_0x4f2a[32]] = function() {};
+            window[_0x4f2a[33]] = function() { return _0x4f2a[2]; };
+            window[_0x4f2a[34]] = function() { return null; };
+            window[_0x4f2a[35]] = function() {};
+            window[_0x4f2a[36]] = function() {};
             
-            // Disable eval and Function constructor
-            window.eval = function() {};
-            window.Function = function() {};
+            // Disable debugging timers temporarily
+            const originalSetTimeout = window[_0x4f2a[37]];
+            const originalSetInterval = window[_0x4f2a[38]];
+            window[_0x4f2a[37]] = function() {};
+            window[_0x4f2a[38]] = function() {};
             
-            // Disable setTimeout and setInterval for debugging
-            const originalSetTimeout = window.setTimeout;
-            const originalSetInterval = window.setInterval;
-            window.setTimeout = function() {};
-            window.setInterval = function() {};
-            
-            // Re-enable setTimeout and setInterval for legitimate use
-            setTimeout(function() {
-                window.setTimeout = originalSetTimeout;
-                window.setInterval = originalSetInterval;
+            // Re-enable timers after protection is set
+            originalSetTimeout(function() {
+                window[_0x4f2a[37]] = originalSetTimeout;
+                window[_0x4f2a[38]] = originalSetInterval;
             }, 1000);
             
-            // Additional protection: Disable view source
-            document.addEventListener('keydown', function(e) {
-                if (e.ctrlKey && e.keyCode === 85) { // Ctrl+U
-                    e.preventDefault();
-                    return false;
-                }
-            });
-            
             // Disable drag and drop
-            document.addEventListener('dragstart', function(e) {
-                e.preventDefault();
-                return false;
+            document[_0x4f2a[10]](_0x4f2a[13], function(e) {
+                e[_0x4f2a[0]]();
+                return _0x4f2a[2];
             });
             
             // Disable copy
-            document.addEventListener('copy', function(e) {
-                e.preventDefault();
-                return false;
+            document[_0x4f2a[10]](_0x4f2a[14], function(e) {
+                e[_0x4f2a[0]]();
+                return _0x4f2a[2];
             });
+            
+            // Disable selection
+            document[_0x4f2a[10]]('selectstart', function(e) {
+                e[_0x4f2a[0]]();
+                return _0x4f2a[2];
+            });
+            
+            // Disable cut
+            document[_0x4f2a[10]]('cut', function(e) {
+                e[_0x4f2a[0]]();
+                return _0x4f2a[2];
+            });
+            
+            // Disable paste
+            document[_0x4f2a[10]]('paste', function(e) {
+                e[_0x4f2a[0]]();
+                return _0x4f2a[2];
+            });
+            
+            // Disable save page
+            document[_0x4f2a[10]]('beforeunload', function(e) {
+                e[_0x4f2a[0]]();
+                return _0x4f2a[2];
+            });
+            
+            // Continuous monitoring for new developer tools
+            setInterval(function() {
+                // Check for new console methods
+                if (window.console && typeof window.console.log !== 'function') {
+                    devtools.detectionCount++;
+                    if (devtools.detectionCount > 2 && !devtools[_0x4f2a[23]]) {
+                        devtools[_0x4f2a[23]] = true;
+                        document[_0x4f2a[15]][_0x4f2a[16]] = '<div style="' + _0x4f2a[17] + '">' + _0x4f2a[18] + '</div>';
+                    }
+                }
+            }, 1000);
             
         })();
         
