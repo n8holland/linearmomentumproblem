@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: interactive-homework
+    env: static
+    buildCommand: null
+    startCommand: null
+    staticPublishPath: .
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html 
